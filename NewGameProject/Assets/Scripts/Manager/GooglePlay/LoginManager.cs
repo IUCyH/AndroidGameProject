@@ -15,7 +15,7 @@ public class LoginManager : SingleTon<LoginManager>
 
     bool IsLogin => PlayGamesPlatform.Instance.localUser.authenticated;
     
-    #if UNITY_EDITOR
+    #if !UNITY_EDITOR
     protected override void OnStart()
     {
         PlayGamesPlatform.DebugLogEnabled = true;

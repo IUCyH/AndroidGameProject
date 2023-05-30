@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum PopupType
 {
@@ -15,6 +16,8 @@ public enum PopupType
 public class PopupManager : SingleTon_DontDestroy<PopupManager>
 {
     [SerializeField]
+    Image preventTouch;
+    [SerializeField]
     Canvas canvas;
     Dictionary<PopupType, ObjectPool<IPopup>> popupPoolDic = new Dictionary<PopupType, ObjectPool<IPopup>>();
     Stack<IPopup> popupStack = new Stack<IPopup>();
@@ -26,6 +29,7 @@ public class PopupManager : SingleTon_DontDestroy<PopupManager>
 
         popup.Open();
         popupStack.Push(popup);
+        SetActivePreventClick(true);
     }
 
     public void HidePopup()
@@ -36,6 +40,11 @@ public class PopupManager : SingleTon_DontDestroy<PopupManager>
         {
             popup.Close();
             popupPoolDic[popup.Type].Set(popup);
+
+            if (popupStack.Count < 1)
+            {
+                SetActivePreventClick(false);
+            }
         }
     }
 
@@ -59,6 +68,21 @@ public class PopupManager : SingleTon_DontDestroy<PopupManager>
 
                 return obj.GetComponent<IPopup>();
             }));
+        }
+
+        SetActivePreventClick(false);
+    }
+
+    void SetActivePreventClick(bool value)
+    {
+        preventTouch.enabled = value;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Slash))
+        {
+            ShowPopup(PopupType.OkCancel, "Test", "Woooow it's test!");
         }
     }
 }
